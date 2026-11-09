@@ -31,7 +31,7 @@ Si da error de conexión con la base de datos, cambia `db` por `localhost` en `j
 
 ## Cómo funciona el laberinto
 
-El tablero es una cuadrícula de 20 x 10 celdas de 50 px (200 celdas). Si lo piensas como un grafo, cada celda es un nodo y cada pared entre dos celdas vecinas es una arista.
+El tablero es una cuadrícula de 18 x 9 celdas de 60 px (162 celdas), o sea una imagen de 1080 x 540. Si lo piensas como un grafo, cada celda es un nodo y cada pared entre dos celdas vecinas es una arista.
 
 Para generarlo uso un **DFS aleatorio** (recursive backtracker), está en `backend/generar_imagen/Laberinto.py`:
 
@@ -39,9 +39,9 @@ Para generarlo uso un **DFS aleatorio** (recursive backtracker), está en `backe
 2. Baraja las 4 direcciones y se mueve a un vecino que no haya visitado, rompiendo la pared entre los dos.
 3. Repite desde ahí. Si se queda sin vecinos libres se devuelve (backtracking) hasta encontrar otro camino.
 
-Como solo rompe paredes hacia celdas no visitadas, el resultado es un árbol: todas las celdas quedan conectadas y entre dos celdas hay **un solo camino**, así que siempre se puede llegar al tesoro. Con 200 celdas el camino al tesoro es bastante más largo (en una prueba pasó por 73 celdas). Las paredes que quedan se guardan en la tabla `Pared` y se dibujan con una función que arma las líneas pixel por pixel.
+Como solo rompe paredes hacia celdas no visitadas, el resultado es un árbol: todas las celdas quedan conectadas y entre dos celdas hay **un solo camino**, así que siempre se puede llegar al tesoro. Con 162 celdas el camino al tesoro sale bien largo y enredado. Las paredes que quedan se guardan en la tabla `Pared` y se dibujan con una función que arma las líneas pixel por pixel.
 
-Para los choques se trata todo como rectángulos: si el personaje se va a meter en una pared, con min/max se deja justo al lado de ella en vez de cancelar el movimiento. El personaje mide 30 px y avanza 10 px por tecla, así cabe justo por los pasillos de 45 px.
+Para los choques se trata todo como rectángulos: si el personaje se va a meter en una pared, con min/max se deja justo al lado de ella en vez de cancelar el movimiento. El personaje mide 38 px y avanza 15 px por tecla (4 teclas = 1 celda), así cabe por los pasillos de 55 px.
 
 ## Archivos importantes
 

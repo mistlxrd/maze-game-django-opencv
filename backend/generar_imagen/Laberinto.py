@@ -2,10 +2,10 @@ import random
 import cv2
 from backend.models import Pared
 
-CELDA_W = 50
-CELDA_H = 50
-COLS = 20
-FILAS = 10
+CELDA_W = 60
+CELDA_H = 60
+COLS = 18
+FILAS = 9
 GROSOR = 5
 
 ## Dibuja linea horizontal discretizada usando segmentos verticales contiguos

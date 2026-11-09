@@ -3,18 +3,20 @@ from backend.models import Personaje, PersonajeSeleccionado, Pared
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
 from backend.generar_imagen.Jugador import Jugador
-from backend.generar_imagen.Laberinto import Laberinto
+from backend.generar_imagen.Laberinto import Laberinto, CELDA_W, CELDA_H, COLS, FILAS
 
 import os
 import numpy as np
 import json
 import cv2 
 
-W = 1000
-H = 500
+# El tamaño de la imagen sale de la cuadrícula del laberinto (18 x 9 celdas de 60 px = 1080 x 540)
+W = COLS * CELDA_W
+H = FILAS * CELDA_H
 PATH = os.getcwd()
-TAM_PERSONAJE = 30
-INICIO_X, INICIO_Y = 10, 10  # dentro de la primera celda
+TAM_PERSONAJE = 38
+MARGEN = 13  # separación del personaje con el borde de su celda
+INICIO_X, INICIO_Y = MARGEN, MARGEN  # dentro de la primera celda
 # Create your views here.
 def dibujar_linea_horizontal(img, x_inicio, y, largo, grosor=5, color=(100, 200, 100)):                                                                                  
         for x in range(x_inicio, x_inicio + largo):                                                                                                                          
@@ -88,7 +90,7 @@ def generar_imagen(request):
         laberinto = Laberinto()
         key = request.GET.get("tecla", "")
 
-        # El personaje debe ser más chico que una celda (50x50) para pasar por los pasillos
+        # El personaje debe ser más chico que una celda (60x60) para pasar por los pasillos
         personaje = cv2.imread(PATH + p.imagen.url)
         personaje = recortar_cuadrado(personaje)
         personaje = cv2.resize(personaje, (TAM_PERSONAJE, TAM_PERSONAJE))
@@ -98,7 +100,8 @@ def generar_imagen(request):
         # Tesoro en la última celda (abajo a la derecha)
         tesoro = cv2.imread("tesoro.jpg")
         tesoro = cv2.resize(tesoro, (TAM_PERSONAJE, TAM_PERSONAJE))
-        tx, ty = 960, 460
+        tx = (COLS - 1) * CELDA_W + MARGEN
+        ty = (FILAS - 1) * CELDA_H + MARGEN
 
         # Lienzo blanco donde se dibuja todo
         img = np.full((H, W, 3), 255, dtype=np.uint8)
@@ -130,7 +133,7 @@ def generar_imagen(request):
         img[y:y+alto_p, x:x+ancho_p] = personaje
 
         if ps.laberinto_completado:
-            cv2.putText(img, "Laberinto completado!", (280, 260), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
+            cv2.putText(img, "Laberinto completado!", (W // 2 - 260, H // 2 + 10), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
 
         # 7. Responder imagen
         ok, buffer = cv2.imencode(".jpg", img)

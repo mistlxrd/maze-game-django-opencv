@@ -29,9 +29,9 @@ for nombre, archivo in PERSONAJES.items():
         nombre=nombre,
         defaults={"imagen": (Path("static") / archivo).as_posix()},
         create_defaults={
-            "x": 10,  # dentro de la primera celda del laberinto
-            "y": 10,
-            "velocidad": 10,
+            "x": 13,  # dentro de la primera celda del laberinto
+            "y": 13,
+            "velocidad": 15,
             "imagen": (Path("static") / archivo).as_posix(),
         },
     )
