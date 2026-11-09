@@ -1,0 +1,110 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Selección de personaje</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="seleccion-body">
+<div class="personajes-container seleccion">
+    <h2 class="seleccion-titulo">Elige tu personaje</h2>
+
+    <div class="carrusel">
+        <button type="button" class="carrusel-flecha" id="anterior" aria-label="Personaje anterior">&#8249;</button>
+
+        <!-- Vecinos pequeños a los lados y el personaje actual al centro -->
+        <div class="carrusel-pista">
+            <img class="personaje-img carrusel-vecino" id="img-anterior" alt="">
+            <img class="personaje-img carrusel-centro" id="img-centro" alt="">
+            <img class="personaje-img carrusel-vecino" id="img-siguiente" alt="">
+        </div>
+
+        <button type="button" class="carrusel-flecha" id="siguiente" aria-label="Personaje siguiente">&#8250;</button>
+    </div>
+
+    <h3 class="personaje-nombre carrusel-nombre" id="nombre"></h3>
+    <div class="carrusel-puntos" id="puntos"></div>
+    <p class="carrusel-ayuda">Usa &larr; &rarr; o A / D para cambiar de personaje</p>
+
+    <button type="button" class="boton-tablero" id="ir-tablero">Ir al tablero</button>
+</div>
+
+{{ personajes|json_script:"datos-personajes" }}
+{{ seleccionado_id|json_script:"datos-seleccionado" }}
+
+<script>
+    const personajes = JSON.parse(document.getElementById("datos-personajes").textContent);
+    const seleccionadoId = JSON.parse(document.getElementById("datos-seleccionado").textContent);
+    const URL_SELECCIONAR = "{% url 'seleccionar_personaje' 0 %}".replace(/0$/, "");
+    const URL_TABLERO = "{% url 'tablero' %}";
+
+    const imgCentro = document.getElementById("img-centro");
+    const imgAnterior = document.getElementById("img-anterior");
+    const imgSiguiente = document.getElementById("img-siguiente");
+    const nombre = document.getElementById("nombre");
+    const puntos = document.getElementById("puntos");
+
+    // Parte en el personaje elegido actualmente (o el primero)
+    let indice = Math.max(0, personajes.findIndex((p) => p.id === seleccionadoId));
+
+    // Índice circular: después del último vuelve al primero
+    const circular = (i) => (i + personajes.length) % personajes.length;
+
+    personajes.forEach((p, i) => {
+        const punto = document.createElement("span");
+        punto.className = "carrusel-punto";
+        punto.addEventListener("click", () => { indice = i; mostrar(); });
+        puntos.appendChild(punto);
+    });
+
+    function mostrar() {
+        const actual = personajes[indice];
+        const ant = personajes[circular(indice - 1)];
+        const sig = personajes[circular(indice + 1)];
+
+        imgCentro.src = actual.imagen_url;
+        imgCentro.alt = actual.nombre;
+        imgAnterior.src = ant.imagen_url;
+        imgSiguiente.src = sig.imagen_url;
+        nombre.textContent = actual.nombre;
+
+        // Pequeña animación al cambiar
+        imgCentro.classList.remove("animar");
+        void imgCentro.offsetWidth;
+        imgCentro.classList.add("animar");
+
+        [...puntos.children].forEach((el, i) => el.classList.toggle("activo", i === indice));
+    }
+
+    function mover(paso) {
+        indice = circular(indice + paso);
+        mostrar();
+    }
+
+    async function irAlTablero() {
+        const res = await fetch(URL_SELECCIONAR + personajes[indice].id, {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        });
+        if (res.ok) location.href = URL_TABLERO;
+    }
+
+    document.getElementById("anterior").addEventListener("click", () => mover(-1));
+    document.getElementById("siguiente").addEventListener("click", () => mover(1));
+    imgAnterior.addEventListener("click", () => mover(-1));
+    imgSiguiente.addEventListener("click", () => mover(1));
+    document.getElementById("ir-tablero").addEventListener("click", irAlTablero);
+
+    document.addEventListener("keydown", (e) => {
+        const tecla = e.key.toLowerCase();
+        if (tecla === "arrowleft" || tecla === "a") mover(-1);
+        else if (tecla === "arrowright" || tecla === "d") mover(1);
+        else if (tecla === "enter") irAlTablero();
+    });
+
+    if (personajes.length) mostrar();
+</script>
+</body>
+</html>

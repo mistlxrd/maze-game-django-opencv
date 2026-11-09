@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    volumes:
+    - .:/api
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_PASSWORD: ldp
+      POSTGRES_USER: alumno
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alumno -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+    volumes: ["db_data:/var/lib/postgresql/data"]
+volumes:
+  db_data:

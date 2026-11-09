@@ -1,0 +1,46 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<div class="personajes-container" style="max-width: none;">
+    <div class="personajes-grid" style="display: block;">
+        <div class="seleccionado-section" style="margin-bottom: 30px; text-align: center;">
+            <h2 style="color: #4f46e5; margin-bottom: 10px;">Tablero</h2>
+            <a href="{% url 'seleccion_personaje' %}" style="display: inline-block; margin-bottom: 16px; padding: 10px 24px; background: #dc2626; color: #ffffff; border-radius: 8px; font-weight: 600; text-decoration: none;">Exit</a>
+
+            {% if personaje_seleccionado %}
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px;">
+                <img class="personaje-img" src="{{ personaje_seleccionado.imagen_url }}" alt="{{ personaje_seleccionado.nombre }}">
+                <h3 class="personaje-nombre">{{ personaje_seleccionado.nombre }}</h3>
+            </div>
+            {% endif %}
+
+            <div class="personaje-card seleccionado-card" style="width: 75vw; margin: 0 auto; border: 2px solid #4f46e5; padding: 0; overflow: hidden;">
+                <img id="frame" alt="Tablero del juego" style="display: block; width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const img = document.getElementById("frame");
+    const TECLAS = ["w", "a", "s", "d"];
+    let ultimaTecla = null;
+
+    async function cargarFrame() {
+        const url = "{% url 'generar_imagen' %}" + "?tecla=" + (ultimaTecla ?? "");
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const anterior = img.src;
+        img.src = URL.createObjectURL(blob);
+        if (anterior.startsWith("blob:")) URL.revokeObjectURL(anterior);
+    }
+
+    cargarFrame();
+
+    document.addEventListener("keydown", (e) => {
+        const tecla = e.key.toLowerCase();
+        if (!TECLAS.includes(tecla)) return;
+        ultimaTecla = tecla;
+        console.log("Tecla:", tecla);
+        cargarFrame();
+    });
+</script>
