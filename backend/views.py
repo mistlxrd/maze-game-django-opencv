@@ -13,8 +13,8 @@ import cv2
 W = 1000
 H = 500
 PATH = os.getcwd()
-TAM_PERSONAJE = 80
-INICIO_X, INICIO_Y = 12, 12  # dentro de la primera celda
+TAM_PERSONAJE = 30
+INICIO_X, INICIO_Y = 10, 10  # dentro de la primera celda
 # Create your views here.
 def dibujar_linea_horizontal(img, x_inicio, y, largo, grosor=5, color=(100, 200, 100)):                                                                                  
         for x in range(x_inicio, x_inicio + largo):                                                                                                                          
@@ -88,7 +88,7 @@ def generar_imagen(request):
         laberinto = Laberinto()
         key = request.GET.get("tecla", "")
 
-        # El personaje debe ser más chico que una celda (100x100) para pasar por los pasillos
+        # El personaje debe ser más chico que una celda (50x50) para pasar por los pasillos
         personaje = cv2.imread(PATH + p.imagen.url)
         personaje = recortar_cuadrado(personaje)
         personaje = cv2.resize(personaje, (TAM_PERSONAJE, TAM_PERSONAJE))
@@ -98,7 +98,7 @@ def generar_imagen(request):
         # Tesoro en la última celda (abajo a la derecha)
         tesoro = cv2.imread("tesoro.jpg")
         tesoro = cv2.resize(tesoro, (TAM_PERSONAJE, TAM_PERSONAJE))
-        tx, ty = 912, 412
+        tx, ty = 960, 460
 
         # Lienzo blanco donde se dibuja todo
         img = np.full((H, W, 3), 255, dtype=np.uint8)
