@@ -14,7 +14,7 @@ PERSONAJES = {
     "pepe": "personaje.png",
     "samael": "unnamed.jpg",
     "Don M": "dxcmkj8eb7yic_600.jpg",
-    "perro del enfasis": "perro_del_enfasis.jpg",
+    "perro del ki": "perro_del_ki.jpg",
     "perro enfasis": "perro_enfasis.jpeg",
     "perro piruleta": "perro_piruleta.jpg",
     "perro cowboy": "perro_cowboy.jpg",
