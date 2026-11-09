@@ -15,9 +15,9 @@ PERSONAJES = {
     "samael": "unnamed.jpg",
     "Don M": "dxcmkj8eb7yic_600.jpg",
     "perro del enfasis": "perro_del_enfasis.jpg",
-    "perro del kizaz enfasis": "perro_del_kizaz_enfasis.jpeg",
+    "perro enfasis": "perro_enfasis.jpeg",
     "perro piruleta": "perro_piruleta.jpg",
-    "perro vio cowboy": "perro_vio_cowboy.jpg",
+    "perro cowboy": "perro_cowboy.jpg",
 }
 
 for nombre, archivo in PERSONAJES.items():
