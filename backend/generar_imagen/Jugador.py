@@ -5,7 +5,7 @@ class Jugador:
         self.velocidad = personaje_db.velocidad
         
         
-    def movimiento_personaje(self, key, ancho=100, alto=100, W=1000, H=500):
+    def movimiento_personaje(self, key, ancho=38, alto=38, W=1080, H=540):
         x = self.x
         y = self.y
         
